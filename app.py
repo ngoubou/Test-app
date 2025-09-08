@@ -6,7 +6,8 @@ import plotly.graph_objects as go
 import networkx as nx
 import requests
 
-st.set_page_config(page_title="Climat & Politiques Publiques – Démo", layout="wide")
+
+st.set_page_config(page_title="IA et Transition Écologique – Démo", layout="wide")#st.set_page_config(page_title="Climat & Politiques Publiques – Démo", layout="wide")
 
 # ---------------------------
 # --------- THEME -----------
