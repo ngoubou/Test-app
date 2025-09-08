@@ -126,20 +126,23 @@ def default_pxweb_example():
     Ici on montre la structure (Alue/Vuosi). Remplace l'URL et les codes variables
     par ceux de ta table (ex. indicateurs de durabilité / climat).
     """
-    url = "https://stat.hel.fi/api/v1/fi/Aluesarjat/vrm/perh/alu_perh_005y.px"
+    url = "https://stat.hel.fi:443/api/v1/fi/Ymparistotilasto/ene/kauen/ymp_kauen_002f.px"
     example_query = {
-        "query": [
-            {
-                "code": "Alue",
-                "selection": {"filter": "item", "values": ["091"]}  # 091 = Helsinki (exemple)
-            },
-            {
-                "code": "Vuosi",
-                "selection": {"filter": "top", "values": ["6"], "time": True}  # 6 dernières années
-            }
-        ],
-        "response": {"format": "json-stat"}
+  "query": [
+    {
+      "code": "Tiedot",
+      "selection": {
+        "filter": "item",
+        "values": [
+          "määkpl"
+        ]
+      }
     }
+  ],
+  "response": {
+    "format": "json-stat"
+  }
+}
     return url, example_query
 
 # ---------------------------
