@@ -22,7 +22,7 @@ with st.sidebar:
     st.markdown("### Source de données")
     data_mode = st.radio(
         "Choisir la source",
-        ["Fictives", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
+        ["Données fictives", "Données en ligne ", "Fichier (CSV/XLSX)"],#["Fictives", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
         index=0
     )
     st.markdown("---")
