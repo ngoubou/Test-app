@@ -48,7 +48,7 @@ with st.sidebar:
 # ---------------------------
 def load_fictive_data():
     # Série temporelle 2020–2025 pour 3 actions et leurs indicateurs.
-    years = list(range(2020, 2026))
+    years = list(range(2019, 2025))
     actions_time = {
         "Plantation d'arbres": {
             "Émissions CO₂ (t/an)": [1000, 980, 960, 940, 920, 900],
@@ -275,7 +275,7 @@ selected_actions = st.multiselect("Sélectionne une ou plusieurs actions", actio
 # Filtre années
 years_all = sorted(df_long["annee"].dropna().unique())
 if len(years_all) == 0:
-    years_all = list(range(2020, 2026))
+    years_all = list(range(2019, 2025))
 sel_years = st.slider("Plage d'années", int(min(years_all)), int(max(years_all)), (int(min(years_all)), int(max(years_all))))
 
 df_view = df_long[
