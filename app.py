@@ -85,7 +85,7 @@ def pxweb_fetch(url: str, query: Dict) -> pd.DataFrame:
     r.raise_for_status()
     j = r.json()
 
-    # PxWeb peut renvoyer "json-stat2" (liste de values + dimension labels).
+    # PxWeb peut renvoyer "json-stat" (liste de values + dimension labels).
     # On reconstruira un tableau long (tidy).
     # Format minimal : j['value'] + j['dimension'] -> catégories.
     values = j.get("value", [])
@@ -138,7 +138,7 @@ def default_pxweb_example():
                 "selection": {"filter": "top", "values": ["6"], "time": True}  # 6 dernières années
             }
         ],
-        "response": {"format": "json-stat2"}
+        "response": {"format": "json-stat"}
     }
     return url, example_query
 
@@ -195,7 +195,7 @@ elif data_mode == "Helsinki – PxWeb":
     with st.expander("Paramètres de requête PxWeb (exemple)"):
         url_px = st.text_input("URL de la table PxWeb", value=url_default, help="Remplace par une table environnementale/indicateurs durables.")
         q_str = st.text_area("JSON de requête", value=json.dumps(q_default, indent=2))
-        fmt = st.selectbox("Format de réponse", ["json-stat2"], index=0)
+        fmt = st.selectbox("Format de réponse", ["json-stat"], index=0)
     run = st.button("📡 Interroger PxWeb")
     if run:
         try:
