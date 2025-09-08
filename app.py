@@ -357,57 +357,57 @@ st.dataframe(
 # ------ IMPACT NETWORK -----
 st.subheader("🕸️ Réseau d’impacts (action → indicateur)")
 
-# 1. Création du graphe pondéré
+# 1. Creer le graphe pondéré
 G = nx.DiGraph()
 for _, r in df_last.iterrows():
     weight = abs((r["proj"] or 0) - (r["valeur"] or 0))
     G.add_edge(r["action"], r["indicateur"], weight=weight)
 
-# 2. Mise en page
+# 2. Générer la mise en page
 pos = nx.spring_layout(G, seed=42)
 
-# 3. Préparation des arêtes avec épaisseur amplifiée
-edge_x, edge_y = [], []
-edge_widths = []  # stocke les épaisseurs
+# 3. Créer une trace pour chaque lien pour permettre une épaisseur variable
+edge_traces = []
 for u, v, d in G.edges(data=True):
     x0, y0 = pos[u]
     x1, y1 = pos[v]
-    edge_x.extend([x0, x1, None])
-    edge_y.extend([y0, y1, None])
-    edge_widths.append(d["weight"] * 5 + 1)  # facteur 5 pour visibilité, plus minimum 1
+    thickness = d["weight"] * 5 + 1  # Facteur 5 pour visibilité, minimum 1
+    trace = go.Scatter(
+        x=[x0, x1], y=[y0, y1],
+        mode="lines",
+        line=dict(width=thickness, color="#888"),
+        hoverinfo="none"
+    )
+    edge_traces.append(trace)
 
-edge_trace = go.Scatter(
-    x=edge_x, y=edge_y,
-    mode="lines",
-    line=dict(width=edge_widths, color="#888"),
-    hoverinfo="none"
-)
-
-# 4. Préparation des nœuds avec couleurs distinctes
-node_x, node_y, labels, colors = [], [], [], []
+# 4. Préparer les nœuds avec deux couleurs distinctes
+node_x, node_y, labels, node_colors = [], [], [], []
 for node, (x, y) in pos.items():
     node_x.append(x)
     node_y.append(y)
     labels.append(node)
-    # Vert pour actions, bleu pour indicateurs
-    colors.append('lightgreen' if node in df_last["action"].unique() else 'skyblue')
+    if node in df_last["action"].values:
+        node_colors.append('lightgreen')  # actions en vert
+    else:
+        node_colors.append('skyblue')     # indicateurs en bleu
 
 node_trace = go.Scatter(
     x=node_x, y=node_y,
-    mode='markers+text',
+    mode="markers+text",
     text=labels,
-    textposition='bottom center',
-    marker=dict(size=28, color=colors, line=dict(width=2, color='#555'))
+    textposition="bottom center",
+    marker=dict(size=28, color=node_colors, line=dict(width=2, color='#555'))
 )
 
-# 5. Création de la figure finale
-fig_net = go.Figure(data=[edge_trace, node_trace])
+# 5. Construire et afficher la figure
+fig_net = go.Figure(data=edge_traces + [node_trace])
 fig_net.update_layout(
     height=360,
     showlegend=False,
     margin=dict(l=10, r=10, t=10, b=10)
 )
 st.plotly_chart(fig_net, use_container_width=True)
+
 
 
 # ---------------------------
