@@ -22,7 +22,7 @@ with st.sidebar:
     st.markdown("### Source de données")
     data_mode = st.radio(
         "Choisir la source",
-        ["Données fictives", "Données en ligne ", "Fichier (CSV/XLSX)"],#["Fictives", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
+        ["Données fictives", "Données en ligne", "Fichier (CSV/XLSX)"],#["Fictives", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
         index=0
     )
     st.markdown("---")
@@ -189,10 +189,10 @@ def normalize_file(df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------
 # ---- LOAD CHOSEN DATA -----
 # ---------------------------
-if data_mode == "Fictives":
+if data_mode == "Données fictives":
     df_long, YEARS, ACTIONS = load_fictive_data()
 
-elif data_mode == "Helsinki – PxWeb":
+elif data_mode == "Données en ligne":
     st.info("⚙️ Mode **Helsinki – PxWeb** : adapte l’URL de table et la requête JSON. Tu peux obtenir les deux via le bouton “Ajouter le tableau à votre application / API helper” dans l’interface PxWeb d’Helsinki.", icon="ℹ️")
     url_default, q_default = default_pxweb_example()
     with st.expander("Paramètres de requête PxWeb (exemple)"):
