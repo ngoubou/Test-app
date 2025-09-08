@@ -284,26 +284,36 @@ df_view = df_long[
 # ---------- KPI ------------
 # ---------------------------
 def kpi_block(df: pd.DataFrame):
-    # KPI: delta dernière vs première année, par indicateur (sommes si multi-actions)
     kpis = []
     for ind in df["indicateur"].unique():
         dfi = df[df["indicateur"] == ind].groupby("annee", as_index=False)["valeur"].sum().sort_values("annee")
         if len(dfi) >= 2:
-            delta = dfi["valeur"].iloc[-1] - dfi["valeur"].iloc[0]
-            pct = (delta / dfi["valeur"].iloc[0] * 100) if dfi["valeur"].iloc[0] != 0 else None
-            kpis.append((ind, dfi["valeur"].iloc[0], dfi["valeur"].iloc[-1], delta, pct))
-    # Affiche 3 KPI max (les plus “parlants” absolus)
+            v0 = dfi["valeur"].iloc[0]
+            v1 = dfi["valeur"].iloc[-1]
+            delta = v1 - v0
+            pct = (delta / v0 * 100) if (v0 != 0 and pd.notna(v0)) else None
+            kpis.append((ind, v0, v1, delta, pct))
     kpis = sorted(kpis, key=lambda t: abs(t[3]), reverse=True)[:3]
     cols = st.columns(max(1, len(kpis)))
     for c, (ind, v0, v1, d, p) in zip(cols, kpis):
         with c:
             trend = "↘︎" if d < 0 else "↗︎"
             color = ACCENT if d < 0 and ("CO₂" in ind or "Déchets" in ind or "Consommation" in ind) else PRIMARY
-            st.markdown(f"<div style='padding:12px;border-radius:16px;border:1px solid {MUTED};'>"
-                        f"<div style='color:{MUTED};font-size:13px'>{ind}</div>"
-                        f"<div style='font-size:26px;font-weight:700'>{trend} {v1:,.0f}</div>"
-                        f"<div style='color:{color};font-size:13px'>vs {v0:,.0f} ({'+' if (p or 0)>=0 else ''}{p:.1f}% )</div>"
-                        f"</div>", unsafe_allow_html=True)
+            # Gérer p None
+            if p is None:
+                pct_str = "N/A"
+                sign = ""
+            else:
+                pct_str = f"{p:.1f}%"
+                sign = "+" if p >= 0 else ""
+            st.markdown(f"""
+                <div style='padding:12px;border-radius:16px;border:1px solid {MUTED};'>
+                    <div style='color:{MUTED};font-size:13px'>{ind}</div>
+                    <div style='font-size:26px;font-weight:700'>{trend} {v1:,.0f}</div>
+                    <div style='color:{color};font-size:13px'>vs {v0:,.0f} ({sign}{pct_str})</div>
+                </div>
+            """, unsafe_allow_html=True)
+
 
 kpi_block(df_view)
 
