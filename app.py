@@ -393,7 +393,7 @@ st.download_button(
 with st.expander("Notes"):#with st.expander("Notes pour la démo (à dire à l’oral)"):
     st.markdown("""
 - Cette démo combine **pédagogie** (scénarios simples) et **capacité d’industrialisation** (API PxWeb, fichiers HSY/OD).
-- Pour votre ville : on peut **brancher des capteurs / formulaires / open data** et définir un **plan de collecte** (fréquences, qualité, métadonnées).
-- L’outil se décline pour le **pilotage des politiques publiques**, l’**aménagement** (logement, mobilité) et la **transition écologique**.
+- Pour Vincennes : on peut **brancher des capteurs / formulaires / open data** et définir un **plan de collecte** (fréquences, qualité, métadonnées).
+- L’outil se décline pour le **pilotage des politiques publiques**, l’**aménagement** (logement, mobilité) etc.
     """)
 
