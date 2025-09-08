@@ -22,7 +22,7 @@ with st.sidebar:
     st.markdown("### Source de données")
     data_mode = st.radio(
         "Choisir la source",
-        ["Fictives (démo immédiate)", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
+        ["Fictives", "Helsinki – PxWeb", "Fichier (CSV/XLSX)"],
         index=0
     )
     st.markdown("---")
@@ -189,7 +189,7 @@ def normalize_file(df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------
 # ---- LOAD CHOSEN DATA -----
 # ---------------------------
-if data_mode == "Fictives (démo immédiate)":
+if data_mode == "Fictives":
     df_long, YEARS, ACTIONS = load_fictive_data()
 
 elif data_mode == "Helsinki – PxWeb":
@@ -390,7 +390,7 @@ st.download_button(
 # ---------------------------
 # --------- FOOTER ----------
 # ---------------------------
-with st.expander("Notes pour la démo (à dire à l’oral)"):
+with st.expander("Notes"):#with st.expander("Notes pour la démo (à dire à l’oral)"):
     st.markdown("""
 - Cette démo combine **pédagogie** (scénarios simples) et **capacité d’industrialisation** (API PxWeb, fichiers HSY/OD).
 - Pour votre ville : on peut **brancher des capteurs / formulaires / open data** et définir un **plan de collecte** (fréquences, qualité, métadonnées).
