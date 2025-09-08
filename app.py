@@ -351,83 +351,64 @@ st.dataframe(
     .rename(columns={"valeur":"Récent (observé)","proj":"Projeté (scénario)"}),
     use_container_width=True
 )
-# 1. Créer le graphe pondéré
+
+
+# ---------------------------
+# ------ IMPACT NETWORK -----
+st.subheader("🕸️ Réseau d’impacts (action → indicateur)")
+
+# 1. Création du graphe pondéré
 G = nx.DiGraph()
 for _, r in df_last.iterrows():
-    weight = abs(r["proj"] - r["valeur"])
+    weight = abs((r["proj"] or 0) - (r["valeur"] or 0))
     G.add_edge(r["action"], r["indicateur"], weight=weight)
 
-# 2. Obtenir une mise en page
+# 2. Mise en page
 pos = nx.spring_layout(G, seed=42)
 
-# 3. Créer les traces edge (multiplié par 5 pour visibilité)
-edge_x, edge_y, widths = [], [], []
+# 3. Préparation des arêtes avec épaisseur amplifiée
+edge_x, edge_y = [], []
+edge_widths = []  # stocke les épaisseurs
 for u, v, d in G.edges(data=True):
     x0, y0 = pos[u]
     x1, y1 = pos[v]
-    edge_x += [x0, x1, None]
-    edge_y += [y0, y1, None]
-    widths.append(d["weight"] * 5 + 1)  # faible épaisseur minimale à 1
+    edge_x.extend([x0, x1, None])
+    edge_y.extend([y0, y1, None])
+    edge_widths.append(d["weight"] * 5 + 1)  # facteur 5 pour visibilité, plus minimum 1
 
 edge_trace = go.Scatter(
     x=edge_x, y=edge_y,
     mode="lines",
-    line=dict(width=widths, color="#888"),
+    line=dict(width=edge_widths, color="#888"),
     hoverinfo="none"
 )
 
-# 4. Colorer les nœuds selon type
-node_x, node_y, node_text, node_color = [], [], [], []
-for node, coords in pos.items():
-    node_x.append(coords[0])
-    node_y.append(coords[1])
-    node_text.append(node)
-    # Choisir la couleur selon catégorie
-    if node in df_last["action"].unique():
-        node_color.append('lightgreen')
-    else:
-        node_color.append('skyblue')
+# 4. Préparation des nœuds avec couleurs distinctes
+node_x, node_y, labels, colors = [], [], [], []
+for node, (x, y) in pos.items():
+    node_x.append(x)
+    node_y.append(y)
+    labels.append(node)
+    # Vert pour actions, bleu pour indicateurs
+    colors.append('lightgreen' if node in df_last["action"].unique() else 'skyblue')
 
 node_trace = go.Scatter(
     x=node_x, y=node_y,
-    mode="markers+text",
-    text=node_text, textposition="bottom center",
-    marker=dict(size=28, color=node_color, line_width=2)
+    mode='markers+text',
+    text=labels,
+    textposition='bottom center',
+    marker=dict(size=28, color=colors, line=dict(width=2, color='#555'))
 )
 
-# 5. Affichage
+# 5. Création de la figure finale
 fig_net = go.Figure(data=[edge_trace, node_trace])
 fig_net.update_layout(
-    height=360, showlegend=False,
+    height=360,
+    showlegend=False,
     margin=dict(l=10, r=10, t=10, b=10)
 )
 st.plotly_chart(fig_net, use_container_width=True)
 
-# ---------------------------
-# ------ IMPACT NETWORK -----
-# ---------------------------
-st.subheader("🕸️ Réseau d’impacts (action → indicateur)")
-G = nx.DiGraph()
-# Poids = différence absolue entre observé (dernière année) et projeté
-for _, r in df_last.iterrows():
-    G.add_edge(r["action"], r["indicateur"], weight=abs((r["proj"] or 0) - (r["valeur"] or 0)))
-
-pos = nx.spring_layout(G, seed=42)
-edge_x, edge_y = [], []
-for u, v, d in G.edges(data=True):
-    x0,y0 = pos[u]; x1,y1 = pos[v]
-    edge_x += [x0,x1,None]; edge_y += [y0,y1,None]
-edge_trace = go.Scatter(x=edge_x, y=edge_y, mode="lines", hoverinfo="none",
-                        line=dict(width=2, color="#cbd5e1"))
-node_x, node_y, labels = [], [], []
-for n,(x,y) in pos.items():
-    node_x.append(x); node_y.append(y); labels.append(n)
-node_trace = go.Scatter(x=node_x, y=node_y, mode="markers+text",
-                        text=labels, textposition="bottom center",
-                        marker=dict(size=28, color=ACCENT))
-fig_net = go.Figure(data=[edge_trace, node_trace])
-fig_net.update_layout(height=360, showlegend=False, margin=dict(l=10,r=10,t=10,b=10))
-st.plotly_chart(fig_net, use_container_width=True)
 
 # ---------------------------
 # --------- EXPORT ----------
