@@ -351,6 +351,57 @@ st.dataframe(
     .rename(columns={"valeur":"Récent (observé)","proj":"Projeté (scénario)"}),
     use_container_width=True
 )
+# 1. Créer le graphe pondéré
+G = nx.DiGraph()
+for _, r in df_last.iterrows():
+    weight = abs(r["proj"] - r["valeur"])
+    G.add_edge(r["action"], r["indicateur"], weight=weight)
+
+# 2. Obtenir une mise en page
+pos = nx.spring_layout(G, seed=42)
+
+# 3. Créer les traces edge (multiplié par 5 pour visibilité)
+edge_x, edge_y, widths = [], [], []
+for u, v, d in G.edges(data=True):
+    x0, y0 = pos[u]
+    x1, y1 = pos[v]
+    edge_x += [x0, x1, None]
+    edge_y += [y0, y1, None]
+    widths.append(d["weight"] * 5 + 1)  # faible épaisseur minimale à 1
+
+edge_trace = go.Scatter(
+    x=edge_x, y=edge_y,
+    mode="lines",
+    line=dict(width=widths, color="#888"),
+    hoverinfo="none"
+)
+
+# 4. Colorer les nœuds selon type
+node_x, node_y, node_text, node_color = [], [], [], []
+for node, coords in pos.items():
+    node_x.append(coords[0])
+    node_y.append(coords[1])
+    node_text.append(node)
+    # Choisir la couleur selon catégorie
+    if node in df_last["action"].unique():
+        node_color.append('lightgreen')
+    else:
+        node_color.append('skyblue')
+
+node_trace = go.Scatter(
+    x=node_x, y=node_y,
+    mode="markers+text",
+    text=node_text, textposition="bottom center",
+    marker=dict(size=28, color=node_color, line_width=2)
+)
+
+# 5. Affichage
+fig_net = go.Figure(data=[edge_trace, node_trace])
+fig_net.update_layout(
+    height=360, showlegend=False,
+    margin=dict(l=10, r=10, t=10, b=10)
+)
+st.plotly_chart(fig_net, use_container_width=True)
 
 # ---------------------------
 # ------ IMPACT NETWORK -----
