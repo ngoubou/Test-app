@@ -264,7 +264,7 @@ else:  # Fichier
 # ---------------------------
 # ----------- UI ------------
 # ---------------------------
-st.title("🌱 Démo Climat & Politiques Publiques – Version Finale")
+st.title("🌱 Démo Climat & Politiques Publiques")#st.title("🌱 Démo Climat & Politiques Publiques – Version Finale")
 st.caption("Mode données : **{}**".format(data_mode))
 
 # Choix actions (multi-sélection -> scénarios combinés)
