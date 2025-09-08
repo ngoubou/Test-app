@@ -40,8 +40,8 @@ with st.sidebar:
         "[HSY – GES & bilans énergie/matériaux](https://hri.fi/data/en_GB/dataset/helsingin-seudun-ymparistopalvelujen-hsy-energia-ja-materiaalitaseet-seka-kasvihuonekaasupaastot/)"
     )
     st.markdown("---")
-    st.caption("Astuce : pour une démo, démarre en mode **Fictives**, puis montre "
-               "comment passer à **Helsinki – PxWeb** ou **Fichier**.")
+    #st.caption("Astuce : pour une démo, démarre en mode **Fictives**, puis montre "
+     #          "comment passer à **Helsinki – PxWeb** ou **Fichier**.")
 
 # ---------------------------
 # --- FICTIVE DATA (DEFAULT)
